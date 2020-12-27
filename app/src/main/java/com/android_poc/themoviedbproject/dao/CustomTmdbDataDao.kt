@@ -6,6 +6,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.android_poc.themoviedbproject.pojo.CustomTmdbData
+import io.reactivex.Flowable
+import io.reactivex.Observable
 
 
 @Dao
@@ -22,4 +24,7 @@ interface CustomTmdbDataDao {
 
     @Query("SELECT * FROM CustomTmdbData ORDER BY voteCount DESC")
     fun getPopularTopMovies():LiveData<List<CustomTmdbData>>
+
+    @Query("SELECT COUNT(id) FROM CustomTmdbData")
+    fun checkDatabaseCount():LiveData<Int>
 }
