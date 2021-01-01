@@ -9,5 +9,5 @@ import retrofit2.http.Query
 interface TmdbTopMoviesApiService {
 
     @GET(AppConstants.END_POINT)
-    fun getTopMoviesFromApi(@Query("api_key") apiKey:String = AppConstants.API_KEY):Call<TmdbRootRespTO>
+    fun getTopMoviesFromApi():Call<TmdbRootRespTO>
 }
