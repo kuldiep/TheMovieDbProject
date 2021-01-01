@@ -5,7 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import com.android_poc.themoviedbproject.R
+import com.android_poc.themoviedbproject.databinding.FragmentMovieDetailsBinding
+import com.android_poc.themoviedbproject.pojo.CustomTmdbData
+import com.android_poc.themoviedbproject.utils.AppConstants
+import com.bumptech.glide.Glide
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,7 +26,8 @@ class MovieDetailsFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-
+    private var binding:FragmentMovieDetailsBinding?=null
+    private var customTmdbData:CustomTmdbData?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -33,9 +39,22 @@ class MovieDetailsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movie_details, container, false)
+
+        val view =  inflater.inflate(R.layout.fragment_movie_details, container, false)
+        binding = DataBindingUtil.bind(view)
+        customTmdbData = requireArguments().getSerializable(AppConstants.CUSTOM_MOVIE_OBJ) as CustomTmdbData
+        binding?.customTmdbDetailObj = customTmdbData
+        return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding?.ivMovieDetailBg?.let {
+            Glide.with(this).load(customTmdbData?.posterImgUrl).placeholder(R.drawable.ic_launcher_foreground)
+                .error(R.drawable.ic_launcher_foreground)
+                .centerCrop().into(it)
+        }
+    }
     companion object {
         /**
          * Use this factory method to create a new instance of

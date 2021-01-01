@@ -1,5 +1,6 @@
 package com.android_poc.themoviedbproject.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -61,7 +62,7 @@ class TopMoviesFragment : Fragment(),View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "onViewCreated: called")
-        tmdbViewModel = ViewModelProvider(this).get(TmdbViewModel::class.java)
+        tmdbViewModel = ViewModelProvider(requireActivity()).get(TmdbViewModel::class.java)
         binding?.btnRetry?.setOnClickListener(this)
         binding?.rvMovieList?.layoutManager = LinearLayoutManager(activity)
         binding?.rvMovieList?.itemAnimator = DefaultItemAnimator()
@@ -81,6 +82,10 @@ class TopMoviesFragment : Fragment(),View.OnClickListener {
                 movieListRecyclerAdapter.setMovieListFromDb(it)
                 binding?.btnRetry?.visibility = View.GONE
             }
+        })
+
+        tmdbViewModel.observeMenuItemSelectionInFragment().observe(viewLifecycleOwner,{
+            viewSortedMovies(it)
         })
     }
     companion object {
@@ -108,6 +113,12 @@ class TopMoviesFragment : Fragment(),View.OnClickListener {
         tmdbViewModel.makeNetworkCall()
 
 
+    }
+
+    fun viewSortedMovies(sortType : String){
+        tmdbViewModel.getSortedMoviesBySeletedItemFromDb(sortType)?.observe(viewLifecycleOwner,{
+            movieListRecyclerAdapter.setMovieListFromDb(it)
+        })
     }
 
     override fun onClick(p0: View?) {
@@ -147,5 +158,9 @@ class TopMoviesFragment : Fragment(),View.OnClickListener {
     override fun onDetach() {
         super.onDetach()
         Log.d(TAG, "onDetach: called")
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
     }
 }

@@ -2,11 +2,13 @@ package com.android_poc.themoviedbproject.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.android_poc.themoviedbproject.R
 import com.android_poc.themoviedbproject.pojo.CustomTmdbData
 import com.android_poc.themoviedbproject.utils.ApiCallStatusListener
 
 class TmdbViewModel : BaseViewModel() {
     private val mutableApiCallListenerFlag = MutableLiveData<Boolean>()
+    private var mutableMenuItemSelectionLiveData = MutableLiveData<String>()
 
     fun getMutableApiCallListenerFlag():LiveData<Boolean>{
         return mutableApiCallListenerFlag
@@ -28,10 +30,19 @@ class TmdbViewModel : BaseViewModel() {
     fun getDbStatusListenerFlagFromRepo():LiveData<Boolean>{
         return getRepository().getDbStatusFlagLiveData()
     }
-    fun getPopularTopMoviesFromDbByVotesFromRepo():LiveData<List<CustomTmdbData>>{
-        return getRepository().getPopularTopMoviesFromDbByVotes()
+    fun getSortedMoviesBySeletedItemFromDb(sortValue : String):LiveData<List<CustomTmdbData>>?{
+        if(sortValue.contentEquals("Sort by Vote")){
+            return getRepository().getPopularTopMoviesFromDbByVotes()
+        }else if(sortValue.contentEquals("Sort by Date")) {
+            return getRepository().getLatestTopMoviesFromReleaseDate()
+        }
+        return null
     }
-    fun getLatestTopMoviesFromReleaseDateFromRepo():LiveData<List<CustomTmdbData>>{
-        return getRepository().getLatestTopMoviesFromReleaseDate()
+
+    fun setMenuItemSelection(menuSelection:String){
+        mutableMenuItemSelectionLiveData.value = menuSelection
+    }
+    fun observeMenuItemSelectionInFragment():LiveData<String>{
+        return mutableMenuItemSelectionLiveData
     }
 }
